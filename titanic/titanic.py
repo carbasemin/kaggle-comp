@@ -38,29 +38,33 @@ transformer = ColumnTransformer(
 		('cat', categorical_transformer, categorical_cols)
 		])
 
-# model = Pipeline(
-# 	steps=[
-# 		('preprocessor', transformer),
-# 		('rf', RandomForestClassifier())
-# 	])
+model = Pipeline(
+	steps=[
+		('preprocessor', transformer),
+		('rf', RandomForestClassifier())
+	])
 
-# param_grid = { 
-#     'rf__n_estimators': [10, 50, 100],
-#     'rf__max_features': ['auto', 'sqrt', 'log2'],
-#     'rf__max_depth' : [4,5,6,7,8],
-#     'rf__criterion' :['gini', 'entropy']
-# }
+param_grid = { 
+    'rf__n_estimators': [10, 50, 100],
+    'rf__max_features': ['auto', 'sqrt', 'log2'],
+    'rf__max_depth' : [4,5,6,7,8],
+    'rf__criterion' :['gini', 'entropy']
+}
 
-# clf = GridSearchCV(model, param_grid=param_grid, n_jobs=-1, cv=5)
+clf = GridSearchCV(model, param_grid=param_grid, n_jobs=-1, cv=5)
 
-# clf.fit(X, y)
+clf.fit(X, y)
 
-# best_params, best_score = clf.best_params_, clf.best_score_
+best_params, best_score = clf.best_params_, clf.best_score_
 
-rf = RandomForestClassifier(**{'criterion': 'entropy',
-		 						'max_depth': 8,
-		 						'max_features': 'auto',
-		 						'n_estimators': 50})
+# To get rid of the "rf__"
+keys = [key.split('__')[1] for key in best_params.keys()]
+values = list(best_params.values())
+
+best_params = {keys[i]: values[i] for i in range(len(keys))}
+
+# The optimized model.
+rf = RandomForestClassifier(**best_params)
 
 model = Pipeline(
 	steps=[
