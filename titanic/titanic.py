@@ -1,4 +1,4 @@
-lsimport pandas as pd
+import pandas as pd
 import numpy as np
 
 from custom_stuff import Alone
