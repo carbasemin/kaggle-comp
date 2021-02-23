@@ -1,14 +1,14 @@
 import pandas as pd
 
-from sklearn.linear_model import Lasso, Ridge
+from sklearn.linear_model import Lasso
 from sklearn.model_selection import GridSearchCV
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, PolynomialFeatures
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 
-train = pd.read_csv('./train.csv', index_col='Id')
-test = pd.read_csv('./test.csv', index_col='Id')
+train = pd.read_csv('../train.csv', index_col='Id')
+test = pd.read_csv('../test.csv', index_col='Id')
 
 X = train.drop('SalePrice', axis=1)
 y = train['SalePrice']
@@ -92,9 +92,7 @@ model = Pipeline(
 )
 
 ## Hyperparameter optimization for the last step, I'm keeping it here.
-# param_grid = {
-# 	'regressor__alpha': [1, 10, 25, 50, 75, 100]
-# }
+# param_grid = {'regressor__alpha': [1, 10, 25, 50, 75, 100]}
 
 # clf = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, cv=3)
 
@@ -108,4 +106,4 @@ pred = model.predict(test_)
 
 # Submission stuff.
 pred = pd.DataFrame(pred, index=test.index, columns=['SalePrice'])
-pred.to_csv('submission.csv')
+pred.to_csv('../submission.csv')

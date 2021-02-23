@@ -8,8 +8,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import Ridge
 from sklearn.model_selection import GridSearchCV
 
-train = pd.read_csv('./train.csv', index_col='Id')
-test = pd.read_csv('./test.csv', index_col='Id')
+train = pd.read_csv('../train.csv', index_col='Id')
+test = pd.read_csv('../test.csv', index_col='Id')
 
 X = train.drop('SalePrice', axis=1)
 y = train['SalePrice']
@@ -53,9 +53,8 @@ model = Pipeline(
 	]
 )
 
-# param_grid = {
-# 	'ridge__alpha': [1, 10, 100, 250, 500, 750, 1000, 2500]
-# }
+## Optimization.
+# param_grid = {'ridge__alpha': [1, 10, 100, 250, 500, 750, 1000, 2500]}
 
 # clf = GridSearchCV(model, param_grid=param_grid, n_jobs=-1, cv=5)
 
@@ -66,4 +65,4 @@ model.fit(X, y)
 pred = model.predict(test)
 
 pred = pd.DataFrame(pred, index=test.index, columns=['SalePrice'])
-pred.to_csv('submission.csv')
+pred.to_csv('../submission.csv')

@@ -6,8 +6,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 
 # Import the data.
-train = pd.read_csv('./train.csv', index_col='Id')
-test = pd.read_csv('./test.csv', index_col='Id')
+train = pd.read_csv('.,/train.csv', index_col='Id')
+test = pd.read_csv('../test.csv', index_col='Id')
 
 # Create a mask for features that are "highly corellated" with SalePrice. 
 mask = train.corr()['SalePrice'].values > 0.5
@@ -44,4 +44,4 @@ model.fit(X, y)
 pred = model.predict(test)
  
 pred = pd.DataFrame(pred, index=test.index, columns=['SalePrice'])
-pred.to_csv('submission.csv')
+pred.to_csv('../submission.csv')

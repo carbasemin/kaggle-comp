@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 from sklearn.linear_model import Lasso
 from sklearn.impute import SimpleImputer
@@ -7,11 +6,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures, OneHotEncoder
 from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import mean_squared_log_error
 
 # Import the data.
-train = pd.read_csv('./train.csv', index_col='Id')
-test = pd.read_csv('./test.csv', index_col='Id')
+train = pd.read_csv('../train.csv', index_col='Id')
+test = pd.read_csv('../test.csv', index_col='Id')
 
 X = train.drop('SalePrice', axis=1)
 y = train['SalePrice']
@@ -53,14 +51,9 @@ model = Pipeline(
 
 # clf.fit(X, y)
 
-model.fit(X, y)
-
-# Expected kaggle score.
-y_pred = model.predict(X)
-kaggle = np.sqrt(mean_squared_log_error(y, y_pred))
-
 # Submission stuff.
+model.fit(X, y)
 pred = model.predict(test)
  
 pred = pd.DataFrame(pred, index=test.index, columns=['SalePrice'])
-pred.to_csv('submission.csv')
+pred.to_csv('../submission.csv')

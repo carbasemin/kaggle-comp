@@ -6,10 +6,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import cross_val_score, cross_val_predict
 
-data = pd.read_csv('train.csv', index_col='Id')
-test = pd.read_csv('test.csv', index_col='Id')
+data = pd.read_csv('../train.csv', index_col='Id')
+test = pd.read_csv('../test.csv', index_col='Id')
 
 X = data.iloc[:, :-1]
 y = data.iloc[:, -1]
@@ -45,4 +44,4 @@ model.fit(X, y)
 pred = model.predict(test)
 
 pred = pd.DataFrame(pred, index=test.index, columns=['SalePrice'])
-pred.to_csv('submission.csv')
+pred.to_csv('../submission.csv')
