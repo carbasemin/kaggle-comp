@@ -43,19 +43,10 @@ transformer = ColumnTransformer(
 	]
 )
 
-# From below.
-best_params={
-'n_estimators': 600,
-'min_samples_split': 5,
-'min_samples_leaf': 2,
-'max_features': 'sqrt',
-'max_depth': 40,
-'bootstrap': True}
-
 model = Pipeline(steps=[
 	('preprocess', transformer),
 	('pca', PCA(n_components=4)),
-	('RF', RandomForestRegressor(**best_params, n_jobs=-1))
+	('RF', RandomForestRegressor(n_jobs=-1))
 ])
 
 model.fit(X, y)
