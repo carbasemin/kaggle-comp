@@ -1,11 +1,13 @@
 import pandas as pd
+import numpy as np
 
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import Lasso
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.decomposition import PCA
+from sklearn.preprocessing import PolynomialFeatures, OneHotEncoder, MinMaxScaler
+from sklearn.ensemble import BaggingRegressor
+from sklearn.model_selection import cross_val_score
 
 # Import the data.
 train = pd.read_csv('../train.csv', index_col='Id')
@@ -17,7 +19,6 @@ noisy = train.columns[mask]
 train.drop(noisy, axis=1, inplace=True)
 test.drop(noisy, axis=1, inplace=True)
 
-# Seperating features, label and preparing the test.
 X = train.drop('SalePrice', axis=1)
 y = train['SalePrice']
 test = test[X.columns]
@@ -28,11 +29,10 @@ categorical_cols = [col for col in X.columns if
 numerical_cols = [col for col in X.columns if
 					col not in categorical_cols]
 
-# Categorical preprocessor.
 cat = Pipeline(
 	steps=(
 		('impute', SimpleImputer(strategy='most_frequent')),
-		('encode', OneHotEncoder(sparse=False ,handle_unknown='ignore'))
+		('encode', OneHotEncoder(sparse=False, handle_unknown='ignore'))
 	)
 )
 
@@ -43,24 +43,27 @@ transformer = ColumnTransformer(
 	]
 )
 
-# From below.
-best_params={
-'n_estimators': 600,
-'min_samples_split': 5,
-'min_samples_leaf': 2,
-'max_features': 'sqrt',
-'max_depth': 40,
-'bootstrap': True}
+# Best alpha is 40, so the GridSearch says.
+preprocessor = Pipeline(
+	steps=[
+		('preprocessor', transformer),
+		('poly', PolynomialFeatures(degree=2)),
+		('scaler', MinMaxScaler())
+	]
+)
 
-model = Pipeline(steps=[
-	('preprocess', transformer),
-	('pca', PCA(n_components=4)),
-	('RF', RandomForestRegressor(**best_params, n_jobs=-1))
-])
+X_ = preprocessor.fit_transform(X)
+test_ = preprocessor.transform(test)
+y_ = np.log1p(y)
 
-model.fit(X, y)
+lasso = Lasso(alpha=40, max_iter=10000)
+bag_reg = BaggingRegressor(lasso, n_estimators=50, bootstrap=True)
 
-pred = model.predict(test)
+score = cross_val_score(bag_reg, X_, y_, cv=5, scoring='neg_mean_squared_error')
 
-pred = pd.DataFrame(pred, index=test.index, columns=['SalePrice'])
-pred.to_csv('../submission.csv')
+# Submission stuff.
+# bag_reg.fit(X_, y)
+# pred = bag_reg.predict(test_)
+ 
+# pred = pd.DataFrame(pred, index=test.index, columns=['SalePrice'])
+# pred.to_csv('../submission.csv')

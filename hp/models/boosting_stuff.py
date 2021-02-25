@@ -1,11 +1,10 @@
 import pandas as pd
 
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.decomposition import PCA
+from sklearn.ensemble import GradientBoostingRegressor
 
 # Import the data.
 train = pd.read_csv('../train.csv', index_col='Id')
@@ -17,7 +16,6 @@ noisy = train.columns[mask]
 train.drop(noisy, axis=1, inplace=True)
 test.drop(noisy, axis=1, inplace=True)
 
-# Seperating features, label and preparing the test.
 X = train.drop('SalePrice', axis=1)
 y = train['SalePrice']
 test = test[X.columns]
@@ -28,11 +26,10 @@ categorical_cols = [col for col in X.columns if
 numerical_cols = [col for col in X.columns if
 					col not in categorical_cols]
 
-# Categorical preprocessor.
 cat = Pipeline(
 	steps=(
 		('impute', SimpleImputer(strategy='most_frequent')),
-		('encode', OneHotEncoder(sparse=False ,handle_unknown='ignore'))
+		('encode', OneHotEncoder(sparse=False, handle_unknown='ignore'))
 	)
 )
 
@@ -43,24 +40,25 @@ transformer = ColumnTransformer(
 	]
 )
 
-# From below.
-best_params={
-'n_estimators': 600,
-'min_samples_split': 5,
-'min_samples_leaf': 2,
-'max_features': 'sqrt',
-'max_depth': 40,
-'bootstrap': True}
+# From GridSearchCV.
+best_params = {
+'learning_rate': 0.1,
+'max_depth': 4,
+'max_features': 0.3,
+'min_samples_leaf': 9,
+'n_estimators': 200
+}
 
-model = Pipeline(steps=[
-	('preprocess', transformer),
-	('pca', PCA(n_components=4)),
-	('RF', RandomForestRegressor(**best_params, n_jobs=-1))
-])
+model = Pipeline(
+	steps=[
+		('preprocessor', transformer),
+		('gbr', GradientBoostingRegressor(**best_params))
+	]
+)
 
+# Submission stuff.
 model.fit(X, y)
-
 pred = model.predict(test)
-
+ 
 pred = pd.DataFrame(pred, index=test.index, columns=['SalePrice'])
 pred.to_csv('../submission.csv')
