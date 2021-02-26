@@ -1,6 +1,6 @@
-Titanic and House Prices (and a couple more to come).
+Titanic, House Prices and Digit Recognizer (and a couple more to come).
 
-[titanic model](https://github.com/carbasemin/kaggle_noob/blob/main/titanic/titanic.py) - Random forest with hyperparameter optimization.
+titanic - [RF with hyperparameter optimiziation](https://github.com/carbasemin/kaggle_noob/blob/main/titanic/titanic.py), top %14. Not good, nor bad, just used it to learn the basics of kaggle and all.
 
 hp
   - [Linear regression](https://github.com/carbasemin/kaggle_noob/blob/main/hp/models/model_lr.py) with features that have correlation 0.5 or above with the target; underfits, scores ~0.30 on the competition.
@@ -12,3 +12,7 @@ hp
   - [RF with PCA](https://github.com/carbasemin/kaggle_noob/blob/main/hp/models/PCA_stuff.py) - Altough 4 principal components explain 0.99 of the variance, it does significantly worse than basicRF that uses all the features.
   - [Gradient Boosting Regressor (GBR)](https://github.com/carbasemin/kaggle_noob/blob/main/hp/models/boosting_stuff.py) scores ~0.13 with hyperparameter optimization. Second best model.
   - [Ensemble of Lasso-poly-Lasso and GBR](https://github.com/carbasemin/kaggle_noob/blob/main/hp/models/ensemble.py) - 0.8 from Lasso-poly-Lasso and 0.2 from GBR. A touch better than L-p-L. Still top %10 but increased the ranking about 10 steps.
+
+digit_recognizer
+ - [base](https://github.com/carbasemin/kaggle_noob/blob/main/digit_recognizer/models/base.py) bunch of models with PCA, seeing how they do.
+ - K-NN looked promising, so I optimized it; [model](https://github.com/carbasemin/kaggle_noob/blob/main/digit_recognizer/models/K-NN.py) - PCA with 0.90 of the variance, K-NN with 3 neighbours, scores ~0.97, %71. It's quite bad. Maybe I dropped too many features, didn't optimize the PCA part, maybe that's the most K-NN can do?
