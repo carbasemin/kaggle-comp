@@ -20,7 +20,7 @@ param_grid = {
 'criterion': ['entropy'],
 'max_depth': [8],
 'max_features': ['sqrt'],
-'n_estimators': [100, 150, 200]
+'n_estimators': [200, 350, 500]
 }
 
 clf = GridSearchCV(rf, param_grid=param_grid, cv=3)
